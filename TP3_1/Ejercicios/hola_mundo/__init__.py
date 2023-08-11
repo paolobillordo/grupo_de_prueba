@@ -1,7 +1,6 @@
-from flask import Flask,jsonify
+from flask import Flask, request
 from config import Config
-from datetime import datetime,timedelta
-from math import trunc
+from funciones import Func
 
 
 def init_app():
@@ -18,24 +17,30 @@ def init_app():
     
     @app.route('/about')
     def about():
-        Info={
-            "appname" : Config.APP_NAME,
-            "description" :Config.DESCRIPTION,
-            "developers" :Config.DEVELOPERS,
-            "version" : Config.VERSION
-            }        
-        return jsonify(Info)
+        return Func.about()
 
     @app.route('/sum/<int:num1>/<int:num2>')
     def suma_2_num(num1, num2):
         return f'La suma es {num1 + num2}'
 
     @app.route('/age/<dob>')
-    def cumple(dob):
-        edad = (datetime.today() - datetime.strptime(dob, '%Y-%m-%d')) / timedelta(days=365)        
-        return f'Tu edad es {trunc(int(edad))} años'
+    def cumple(dob):           
+        return Func.cumple(dob)
 
+    @app.route('/operate/<string:operation>/<int:num1>/<int:num2>')
+    def operate(operation,num1, num2):
+        return Func.operate(operation,num1, num2)
     
+    @app.route('/operate')
+    def operate2():
+        operation = request.args.get('operation')
+        num1 = int(request.args.get('num1'))
+        num2 = int(request.args.get('num2'))
+        return Func.operate(operation, num1, num2)
+
+        
+
+
 
 
 
