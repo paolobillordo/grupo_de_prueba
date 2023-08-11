@@ -1,6 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from config import Config
 from funciones import Func
+from datetime import datetime,timedelta
+from morse_code import letters
+
 
 
 def init_app():
@@ -37,10 +40,24 @@ def init_app():
         num1 = int(request.args.get('num1'))
         num2 = int(request.args.get('num2'))
         return Func.operate(operation, num1, num2)
-
-        
-
-
+    
+    @app.route('/title/<string:word>')
+    def title_0(word):
+        return Func.title_1(word)
+    
+    @app.route('/formatted/<string:dni>')
+    def documento(dni):        
+        return Func.documento(dni)
+    
+    @app.route('/format')
+    def usuario():
+        return Func.usuario()
+    
+    @app.route('/encode/<string:keyword>')
+    def encode(keyword):
+        return Func.encode(keyword)
+    
+    
 
 
 
