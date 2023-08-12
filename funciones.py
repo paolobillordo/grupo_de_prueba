@@ -2,7 +2,7 @@ from flask import jsonify, request
 from config import Config
 from datetime import datetime,timedelta
 from math import trunc
-from morse_code import letters
+import json
 
 class Func:
 
@@ -39,24 +39,32 @@ class Func:
         respuesta = {
             "formatted_word": titulo
         }
-        return jsonify(respuesta)
+        return (respuesta, 200, {'Content-Type':'application/json'})
     
     def documento(dni):
         numero_str = dni.replace(".","").replace("-","")
+        for n in numero_str:
+            if(n.isalpha()):
+                return ("El DNI no debe contener letras", 400)
+        if (numero_str[0] == "0" or len(numero_str) != 8):
+            return ("El número de documento no es válido", 400)
         numero = int(numero_str)
         num_format = {
             "formatted_dni": numero
         }
-        if (numero_str[0] == "0" or len(numero_str) != 8):
-            return ("El número de documento no es válido", 400)
-        return jsonify(num_format)
+        return (num_format, 200, {'Content-Type':'application/json'})
     
     def usuario():
         firstname = request.args.get('firstname').title()
         lastname = request.args.get('lastname').title()
         dob = request.args.get('dob')
         dni = request.args.get('dni')
+        if(firstname == "" or lastname == "" or dob == "" or dni == ""):
+            return ("Faltan datos", 400)
         numero_str = dni.replace(".","").replace("-","")
+        for n in numero_str:
+            if(n.isalpha()):
+                return ("El DNI no debe contener letras", 400)
         numero = int(numero_str)        
         if (numero_str[0] == "0" or len(numero_str) != 8):
             return ("El número de documento no es válido", 400)
@@ -69,13 +77,33 @@ class Func:
             "age": edad,
             "dni": numero
         }
-        return jsonify(user)
-    
+        return (user, 200, {'Content-Type':'application/json'})
+        
     def encode(keyword):
-        cadena = keyword.upper()
+        cadena = keyword.upper().replace("+", " ")
+        if (cadena[0] == " " or len(cadena) > 100):
+            return ("Ingrese una clave válida, solo letras y numeros sin espacios al comienzo y signo + para separar palabras", 400)
         codigo = []
+        with open('morse_code.json', 'r') as f:
+           lette = json.load(f)['letters']
         for n in cadena:
-            if (n in letters):
-                codigo.append(letters[n])        
+            if (n in lette):
+                codigo.append(lette[n])
+            else:
+                return ("Ingrese una clave válida, solo letras y numeros sin espacios al comienzo y signo + para separar palabras", 400)
         return ("+".join(codigo))
     
+    def decode(morse_code):
+        codigo = morse_code.split("+")
+        mensaje = []
+        with open('morse_code.json', 'r') as f:
+           letters = json.load(f)['letters']
+        for n in codigo:
+            for clave in letters:
+                if(n == letters[clave]):                    
+                    mensaje.append(clave)
+                            
+        return ("".join(mensaje).capitalize())
+    
+    
+   
