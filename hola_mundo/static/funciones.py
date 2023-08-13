@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import  request
 from config import Config
 from datetime import datetime,timedelta
 from math import trunc
@@ -121,16 +121,16 @@ def func_convert(num):
 # Ejercicio 14
 def func_balance(input):
     stack = Stack()
-    limiters = {
+    simbolos = {
         ')':'(',
         '}':'{',
         ']':'['
     }
-    for character in input:
-        if character in '([{':
-            stack.push(character)
-        elif character in ')]}':
-            if stack.is_empty() or stack.top() != limiters[character]:
+    for caracter in input:
+        if caracter in '([{':
+            stack.push(caracter)
+        elif caracter in ')]}':
+            if stack.is_empty() or stack.top() != simbolos[caracter]:
                 return ({'balanced': False}, 200, {'Content-Type':'application/json'})
             stack.pop()
     resultado = {
