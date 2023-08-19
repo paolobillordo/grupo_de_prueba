@@ -1,7 +1,6 @@
 from flask import  request
 from config import Config
 from datetime import datetime,timedelta
-from math import trunc
 import json
 from hola_mundo.static.stack import *
 
@@ -94,7 +93,7 @@ def func_encode(keyword):
             codigo.append(lette[n])
         else:
             return ({'error': "Ingrese una clave válida, solo letras y numeros sin espacios al comienzo y signo + para separar palabras"}, 400, {'Content-Type':'application/json'})
-    return ("+".join(codigo))
+    return (("+".join(codigo)), 200, {'Content-Type':'application/json'})
 
 # Ejercicio 12    
 def func_decode(morse_code):
